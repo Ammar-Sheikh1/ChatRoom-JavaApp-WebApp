@@ -12,6 +12,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * ClientHandler class handles all interactions with a Java App client
+ * @author Ammar
+ *
+ */
+
 public class ClientHandler implements Runnable{
 	
 	//The socket which we are using to connect with our clients
@@ -20,48 +26,33 @@ public class ClientHandler implements Runnable{
 	
 	//Either initialized or fetched from DB
 	ClientData client;
-	
 	boolean isVerified = false;
 	
 	//The stream which will be used to read and write data socket connections
-	InputStreamReader istream;
 	BufferedReader reader;
-	
 	PrintWriter writer;
 	
-	
-	
-	//Init a ClientHandler assigned to a socket
 	public ClientHandler(Socket s) {
-		
 		
 		try {
 			clientSocket = s;
-			istream = new InputStreamReader(clientSocket.getInputStream());
-			reader = new BufferedReader(istream);
+			reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			writer = new PrintWriter(clientSocket.getOutputStream());
-			
-			
 		} catch (IOException e) {
-			System.out.println("ClientHandler.java IOEXCEPTION");
 			e.printStackTrace();
 		}
 
 	}
 	
 	
-		//Every ClientHandler will run on a seperate thread for each client
 		/**
 		 * A client handler's object is to receive incomrming messages then route them to the recieving socket
 		 * 
 		 */
 		@Override
 		public void run() {
-			loginUser(); //TODO: Add Type exit for method
-			
-			//Either they are alreadi in the database or they are a new person and will
-			//be added to database
 			try {
+				loginUser(); 
 				updateClients();
 				clientMessageMode();
 			} catch (IOException | JSONException e) {
@@ -70,75 +61,72 @@ public class ClientHandler implements Runnable{
 	
 		}
 
-		
-		/** Handles pre-existing accounts and accounts that are being newly created
+		/*
+		 * Handles pre-existing accounts and accounts that are being newly created
 		 *  If invalid login or invalid new account, it notifies client
+		 * @throws JSONException
+		 * @throws IOException
 		 */
-		private void loginUser() {
+		private void loginUser() throws JSONException, IOException{
 			String message = null;
-			
-			try {
-		
-				while((message = reader.readLine()) != null){
-					System.out.println("Message " + message);
-					JSONObject obj = new JSONObject(message);
-					System.out.println("Message recieved " + obj.toString());
-					String u = obj.getString("Username");
-					String t = obj.getString("Type");
-					
-					if(t.equals("createUser")) {
-						String p = obj.getString("Password");
-						if(DataBase.instance().containsUser(u)) {
-							obj.put("Status", "false");
-							writer.println(obj.toString());
-							writer.flush();
-						}
-						else {
-							//Add user to DataBase and return
-							DataBase.instance().addClientInfo(u, p, clientSocket,this);
-							client = DataBase.instance().getClientData(u);
-							username = u;
-							obj.put("Status", "true");
-							updateClients();
-							writer.println(obj.toString());
-							writer.flush();
-							return;
-						}
+
+			while((message = reader.readLine()) != null){
+				System.out.println("Message " + message);
+				JSONObject obj = new JSONObject(message);
+				System.out.println("Message recieved " + obj.toString());
+				String u = obj.getString("Username");
+				String t = obj.getString("Type");
+
+				if(t.equals("createUser")) {
+					String p = obj.getString("Password");
+					if(DataBase.instance().containsUser(u)) {
+						obj.put("Status", "false");
+						writer.println(obj.toString());
+						writer.flush();
 					}
-					
-					
-					if(t.equals("verify")) {
-						String p = obj.getString("Password");
-						if(obj.getString("Type").equals("verify") && DataBase.instance().verifyPassword(u,p)) {
-							obj.put("Status", "true");
-							DataBase.instance().getClientData(u).SetSocket(clientSocket);
-							DataBase.instance().getClientData(u).setOnline(true);
-							DataBase.instance().getClientData(u).setClientHandler(this);
-							username = u;
-							writer.println(obj.toString());
-							writer.flush();
-							updateClients();
-							return;
-						}
-						else {
-							obj.put("Status","false");
-							writer.println(obj.toString());
-							writer.flush();
-						}
-					}
-				
-					if(t.equals("exit")) {
-						//No need to do anything here
+					else {
+						//Add user to DataBase and return
+						DataBase.instance().addClientInfo(u, p, clientSocket,this);
+						client = DataBase.instance().getClientData(u);
+						username = u;
+						obj.put("Status", "true");
+						updateClients();
+						writer.println(obj.toString());
+						writer.flush();
+						return;
 					}
 				}
-			} catch (IOException | JSONException e) {
-				e.printStackTrace();
+
+
+				if(t.equals("verify")) {
+					String p = obj.getString("Password");
+					if(obj.getString("Type").equals("verify") && DataBase.instance().verifyPassword(u,p)) {
+						obj.put("Status", "true");
+						DataBase.instance().getClientData(u).SetSocket(clientSocket);
+						DataBase.instance().getClientData(u).setOnline(true);
+						DataBase.instance().getClientData(u).setClientHandler(this);
+						username = u;
+						writer.println(obj.toString());
+						writer.flush();
+						updateClients();
+						return;
+					}
+					else {
+						obj.put("Status","false");
+						writer.println(obj.toString());
+						writer.flush();
+					}
+				}
+
+				if(t.equals("exit")) {
+					//TODO: Need to update DB 
+				}
 			}
 		}
-		
+
 		/**
 		 * Main Chat method
-		 * This method, just redirects Messages to Receiver Clients
+		 * This method just redirects Messages to Receiver Clients
 		 * @throws IOException
 		 * @throws JSONException
 		 */
@@ -150,11 +138,10 @@ public class ClientHandler implements Runnable{
 				JSONObject obj = new JSONObject(message);
 				String user = obj.getString("Username");
 				String type = obj.getString("Type");
-				
+
 				if(type.equals("message")) {
-					//How to do GroupChat Code !?!?
 					DataBase.instance().addMessageToHistory(user, obj.getString("Receiver"), obj); //Add the message to chatHist.
-					
+
 					if(DataBase.instance().getGroupMap().containsKey(obj.getString("Receiver"))) {
 						String groupName = obj.getString("Receiver");
 						System.out.println("GroupChat Messge Received");
@@ -173,13 +160,13 @@ public class ClientHandler implements Runnable{
 						if(rec.equals("Broadcast")) {
 							for(Map.Entry<String, ClientData> client : DataBase.instance().getClientMap().entrySet()) {
 								if(client.getValue().getClientHandler() != null && !user.equals(client.getKey())) {
-								client.getValue().getClientHandler().writer.println(obj.toString());
-								client.getValue().getClientHandler().writer.flush();
+									client.getValue().getClientHandler().writer.println(obj.toString());
+									client.getValue().getClientHandler().writer.flush();
 								}
 							}
-							
+
 						}
-						
+
 						//This is regular messages//
 						Socket recSocket = DataBase.instance().getUserSocket(rec);
 						//TODO: CHANGE THIS CRAP CODE!!!
@@ -191,7 +178,7 @@ public class ClientHandler implements Runnable{
 						}
 					}
 				}
-				
+
 				else if(type.equals("history")) {
 					String other_user = obj.getString("Receiver");
 					ArrayList<JSONObject> history = DataBase.instance().getchatHistoryOf(user, other_user);
@@ -202,8 +189,8 @@ public class ClientHandler implements Runnable{
 						}
 					}
 				}
-				
-				
+
+
 				//Add to DataBase and tell all added members that they were added to the group
 				else if(type.equals("createGroup")) {
 					DataBase.instance().addGroup(obj.getString("Name"), obj.getJSONArray("Group"));
@@ -215,22 +202,25 @@ public class ClientHandler implements Runnable{
 					DataBase.instance().addToGroup(group, userToAdd);
 					updateClients();
 				}
-				
+
 				else if(type.equals("exit")) {
 					DataBase.instance().getClientData(user).setOnline(false);
-					 updateClients();
+					updateClients();
 				}
-					
+
 			}
 		}
 		
-		/** TODO: 
-		 * This method will be called everytime a new group is created and everytime
+		
+		/**
+		 * -This method will be called everytime a new group is created and everytime
 		 * a new user leaves or exits
-		 * Notifes client of new information, such as new users and new Groups that they 
+		 * -Notifes client of new information, such as new users and new Groups that they 
 		 * are in
 		 * 
-		 * This will update All clients when a comes on or leaves
+		 * -This will update All clients when one opens up or closes the application
+		 * @return
+		 * @throws JSONException
 		 */
 		private boolean updateClients() throws JSONException{
 			System.out.println("In the Update Client function");
@@ -274,7 +264,6 @@ public class ClientHandler implements Runnable{
 					client.getClientHandler().writer.println(obj.toString());
 					client.getClientHandler().writer.flush();
 				}
-				
 			}
 		
 			return true;

@@ -3,18 +3,21 @@ package project7;
 import java.io.Serializable;
 import java.net.Socket;
 
-public class ClientData implements Serializable{
+
+/**
+ * Client Data class used to store information about each client
+ * 
+ * @author Ammar
+ *
+ */
+public class ClientData{
 	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	
 	private String username;
 	private String password;
 	private transient Socket clientSocket;
 	private transient boolean isOnline;
 	private transient ClientHandler clientHandler;
-	//Need to store visilbity!!!!
 	
 	public ClientData(String name, String pass) {
 		username = name;

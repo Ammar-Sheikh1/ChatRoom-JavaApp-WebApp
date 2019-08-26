@@ -9,7 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Web Handler class assigned to every client using Web Application
+ * TODO: UNFINISHED
+ * Web Handler class assigned to every web client
  * @author Ammar
  *
  */

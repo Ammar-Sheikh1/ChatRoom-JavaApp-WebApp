@@ -1,5 +1,10 @@
 package project7;
 
+/**
+ * WebSocketEncoder class used to encode Strings into byte buffers
+ * @author Ammar
+ *
+ */
 public class WebSocketEncoder {
 
 	/**

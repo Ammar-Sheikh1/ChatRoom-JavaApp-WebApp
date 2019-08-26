@@ -15,12 +15,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-//This class will be initilized at the start of every program
-//It will read and write from a file to maintain a DB of active clients
-/*
- * Deserialize ClientData objects from File
- * */
-
+/**
+ * Database singleton class which retains all client information in a file.
+ * @author Ammar
+ *
+ */
 public class DataBase {
 	
 	//Maps username to client data
@@ -78,8 +77,6 @@ public class DataBase {
 			
 	}
 		
-	
-	
 	public boolean addClientInfo(String username,String password,Socket s,ClientHandler c) {
 		if(clientMap.containsKey(username)) {
 			return false;

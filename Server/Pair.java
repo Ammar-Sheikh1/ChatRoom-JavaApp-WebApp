@@ -1,18 +1,9 @@
-/*
- * CRITTERS Critter.java
- * EE422C Project 4 submission by
- * Replace <...> with your actual data.
- * <Ammar Sheikh>
- * <as87934>
- * <76050>
- * <Robert Noe>
- * <rn7768>
- * <Student2 5-digit Unique No.>
- * Slip days used: <1>
- * Spring 2019
- */
 package project7;
 
+/*
+ * "Pair" class which acts more as a 2-tuples in this instance.
+ *	Order does not matter when boolean comparing (equals/hashcode)
+ * */
 public class Pair {
 	
 	
@@ -52,7 +43,7 @@ public class Pair {
 		if(this == o)
 			return true;
 		if(!(o instanceof Pair))
-				return false;
+			return false;
 		
 		Pair p = (Pair) o;
 		return (this.x.equals(p.x) && this.y.equals(p.y)) || (this.x.equals(p.y) && this.y.equals(p.x)); 

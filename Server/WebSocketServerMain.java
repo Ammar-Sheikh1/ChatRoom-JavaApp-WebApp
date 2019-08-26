@@ -1,6 +1,7 @@
 package project7;
 
 import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,15 +18,23 @@ import java.util.regex.Pattern;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * TODO: UNFINISHED, need to add support for multiple client protocol upgrading
+ * (HTTP -> WS ).Also need to remove tester code
+ * 		
+ * @author Ammar
+ *
+ */
+
 public class WebSocketServerMain implements Runnable{
 
 	@Override
-	public void run() {
+	public void run(){
 		ServerSocket server = null;
 		try {
 			server = new ServerSocket(8080);
 
-			System.out.println("Server has started on 127.0.0.1:80.\r\nWaiting for a connection...");
+			System.out.println("Web App Server has started on 127.0.0.1:8080.\r\nWaiting for a connection...");
 			Socket client = server.accept();
 			System.out.println("A client connected.");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -82,26 +91,12 @@ public class WebSocketServerMain implements Runnable{
 				out.write(buf);
 				System.out.println();
 				System.out.println(incoming);
-				
-
 			}
-
-
-
 			
 		} catch (IOException | NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 		
-		finally {
-			if(server != null)
-				try {
-					server.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-		}
-		
-		
+		//server.close
 	}
 }

@@ -2,6 +2,10 @@ package project7;
 
 import org.json.JSONObject;
 
+/*
+ * TODO: Full websocket decoding unfinished for >64byte payloads
+ * WebSocketDecoder class simply used to decode byte buffers from client
+ * */
 public class WebSocketDecoder {
 
 	//Decode a client to server message
