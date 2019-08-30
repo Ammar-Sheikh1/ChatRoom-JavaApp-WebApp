@@ -1,0 +1,65 @@
+body {
+	background-color: #FD7837;
+}
+/*Not really doing anythin right now*/
+#container {
+	/*background-color: ;*/
+	width: 1200px;
+	margin-left: auto;
+	margin-right: auto;
+	align-items: center;
+}
+
+#header{
+	background-color: #D9E1D6;
+	text-align: center;
+	font-family: Arial, sans-serif;
+	border-radius: 10px;
+
+}
+#headerText{
+	padding-right: 500px;
+	float: right;
+	color: #080808
+}
+
+#loginArea{
+	float: left;
+	display: block;
+	margin: 5px;
+}
+
+#interface{
+	clear: both;
+}
+#controller{
+	float: left;
+	padding-top: 50px;
+}
+
+#content{
+	float: right;
+}
+
+#interface button{
+	display: block;
+	padding-top: 15px;
+	padding-bottom: 15px;
+
+	margin: 5px;
+}
+
+#messageArea{
+	overflow-y: scroll;
+	background-color: #FFFAE7
+}
+
+
+#input{
+	padding-left: 400px;
+	clear: both;
+	padding-top: 30px;
+}
+
+
+

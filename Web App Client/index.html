@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title>UT Ammar Chatroom</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <script src="websocket.js" async></script>
+</head>
+<body>
+	<div id="container">
+		<div id="header">
+			<div id="loginArea">
+				<textarea rows=1 placeholder="Username" id="usernameText"></textarea>
+				<textarea rows=1 placeholder="Password" id="passwordText"></textarea>
+				<div>
+				<button id="loginBtn">Login</button>
+				<button>Create Account</button>
+				</div>
+			</div>
+			<div id="headerText">
+				<h2>Welcome to UT Chat!</h2>
+			</div>
+		</div>
+		<div id="interface">
+			<div id="controller">
+				<button id="createBtn">Create Group</button>
+				<button id="appendBtn">Add to Group</button>
+				<button id="histBtn">History</button>
+				<select id="userSelect">
+					<option value="Broadcast">Broadcast</option>
+				</select>
+				</div>
+			</div>
+			<div id="content">
+				<textarea readonly rows="30" cols="100" id="messageArea"></textarea>
+			</div>
+		</div>
+		<div id="input">
+			<textarea id="messageBar" rows="1" cols="50"></textarea>
+			<button id="sendBtn">Send</button>
+		</div>
+	</div>
+</body>
+</html>
