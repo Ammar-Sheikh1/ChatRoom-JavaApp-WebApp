@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
+import java.nio.channels.AsynchronousSocketChannel;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -77,7 +77,7 @@ public class DataBase {
 			
 	}
 		
-	public boolean addClientInfo(String username,String password,Socket s,ClientHandler c) {
+	public boolean addClientInfo(String username,String password,AsynchronousSocketChannel s,ClientHandler c) {
 		if(clientMap.containsKey(username)) {
 			return false;
 		}
@@ -97,7 +97,7 @@ public class DataBase {
 	return clientMap.get(username).getPassword().equals(password);
 	}
 	
-	public Socket getUserSocket(String username) {
+	public AsynchronousSocketChannel getUserSocket(String username) {
 		if(!clientMap.containsKey(username))
 			return null;
 		return clientMap.get(username).getSocket();

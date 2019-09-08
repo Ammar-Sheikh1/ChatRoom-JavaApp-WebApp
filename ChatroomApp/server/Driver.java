@@ -1,9 +1,16 @@
 package server;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousChannelGroup;
+import java.nio.channels.AsynchronousServerSocketChannel;
+import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.CompletionHandler;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class Driver{
 
@@ -12,34 +19,36 @@ public class Driver{
 	
 	public static void main(String[] args) throws IOException {
 		
+		//DataBase clientDB = DataBase.createDB(new File("ClientData.ser"));
 		
-		ServerSocket serverSocket = null;;
-		DataBase clientDB = DataBase.createDB(new File("ClientData.ser"));
 		
-		//Web App Server socket will be run on a different thread
-		Thread webServer = new Thread(new WebSocketServerMain());
+		System.out.println("Main Thread " + Thread.currentThread());
 		
+		//Create Threadpool which will handle all async messaging tasks
+		int numberOfThreads = 10;
+		ExecutorService pool = Executors.newFixedThreadPool(numberOfThreads);
+		AsynchronousChannelGroup group = AsynchronousChannelGroup.withThreadPool(pool);
+		
+				
+		System.out.println("This is the async server");
+		AsynchronousServerSocketChannel server = AsynchronousServerSocketChannel.open(group);
+		server.bind(new InetSocketAddress(4040));
+	
+
+		//This next part is essentially blocking, but I need it this way to 
+		//create an asycnsocketchannel
 		try {
-			
-			webServer.start();
-			serverSocket = new ServerSocket(4040);
-		
-			System.out.println("App Server Socket is bound at Port " + serverSocket.getLocalPort());			
-			
-			while(true) {
-				Socket clientSideSock = serverSocket.accept();
-				System.out.println("Connection made: " + ++clientCount);
-				Thread t = new Thread(new ClientHandler(clientSideSock));
-				t.start();
+			while(true){
+			Future<AsynchronousSocketChannel> client = server.accept();
+			AsynchronousSocketChannel clientSocket = client.get();
+			AppHandler clientHandler = new AppHandler(clientSocket);
+			pool.submit(clientHandler);
+			System.out.println("Client Accepted: " + ++clientCount);
 			}
-		}
-		catch (IOException e1) {
-			System.out.println("Java App Server/Connection Failed");
-			e1.printStackTrace();
-		}
+		} catch (InterruptedException  | ExecutionException e) {
+			e.printStackTrace();
+		} 
 		
-		serverSocket.close();
-		clientDB.saveDB();
 	}
 
 

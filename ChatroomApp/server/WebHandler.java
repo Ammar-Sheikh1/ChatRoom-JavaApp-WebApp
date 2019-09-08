@@ -21,8 +21,11 @@ import org.json.JSONObject;
  *
  */
 public class WebHandler implements Runnable {
+
+	@Override
+	public void run() {}
 	
-	Socket clientSocket;
+	/*Socket clientSocket;
 	String username;
 	
 	InputStream reader;
@@ -85,6 +88,8 @@ public class WebHandler implements Runnable {
 	 * @throws JSONException 
 	 * 
 	 */
+	
+	/*
 	private void loginUser() throws IOException, JSONException {
 		while(true) {
 			int readCount = reader.read(messageBuffer);
@@ -122,7 +127,7 @@ public class WebHandler implements Runnable {
 			
 		}
 		
-	}
+	}*/
 	
 	
 	

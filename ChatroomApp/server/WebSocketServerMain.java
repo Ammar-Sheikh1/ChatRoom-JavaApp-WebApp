@@ -16,7 +16,7 @@ public class WebSocketServerMain implements Runnable{
 
 	@Override
 	public void run(){
-		ServerSocket server = null;
+	/*	ServerSocket server = null;
 		try {
 			server = new ServerSocket(8080);
 			System.out.println("Web server up at port 8080");
@@ -31,7 +31,7 @@ public class WebSocketServerMain implements Runnable{
 			
 		} catch(IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		
 		
 		//server.close
