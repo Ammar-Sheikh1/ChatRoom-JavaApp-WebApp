@@ -1,9 +1,6 @@
 package server;
 
-import java.net.Socket;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
 /**
  * 
  * @author Ammar
@@ -13,7 +10,7 @@ public class ClientHandler{
 	
 	
 	//Socket & user info
-	protected AsynchronousSocketChannel client;
+	protected AsynchronousSocketChannel clientSocket;
 	protected String username;
 	protected ClientData clientData;
 	
@@ -24,7 +21,7 @@ public class ClientHandler{
 	State state;
 	
 	public ClientHandler(AsynchronousSocketChannel s) {
-		client = s;
+		clientSocket = s;
 		state = State.LOGIN;
 	}
 
