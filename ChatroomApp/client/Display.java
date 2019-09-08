@@ -98,7 +98,7 @@ public class Display extends Application{
 				Button bb = new Button("Connect");
 				bb.setOnAction(e->{
 					try {
-						chatSocket = new Socket(ipAddress.getText(),4242);
+						chatSocket = new Socket(ipAddress.getText(),4040);
 						writer = new PrintWriter(chatSocket.getOutputStream());
 						reader = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
 						window.setScene(loginScene);
@@ -254,7 +254,12 @@ public class Display extends Application{
 				obj.put("Password", passwordTextField.getCharacters().toString());
 				writer.println(obj.toString());
 				writer.flush();
-				obj = new JSONObject(getResponse());
+				try {
+					obj = new JSONObject(getResponse());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				if(obj.getString("Status").equals("true")) {
 					clientUsername = obj.getString("Username");
 					messageArea.appendText("Welcome " + clientUsername + "\n");
@@ -281,7 +286,12 @@ public class Display extends Application{
 				obj.put("Password", passwordTextField.getCharacters().toString());
 				writer.println(obj.toString());
 				writer.flush();
-				obj = new JSONObject(getResponse());
+				try {
+					obj = new JSONObject(getResponse());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				if(obj.getString("Status").equals("true")) {
 					clientUsername = obj.getString("Username");
 					messageArea.appendText("Welcome " + clientUsername + "\n");
@@ -435,16 +445,13 @@ public class Display extends Application{
 		
 	}
 	
-	private String getResponse(){
-		String message;
-		try {
-			while((message = reader.readLine())!= null) {
-				return message;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
+	private String getResponse() throws IOException{
+		char[] message = new char[1024];
+		InputStreamReader r = new InputStreamReader(chatSocket.getInputStream());
+		r.read(message);
+		String s = new String(message);
+		System.out.println("Received " + s);
+		return s;
 	}
 
 	public static void LaunchApp (String[] args) {
